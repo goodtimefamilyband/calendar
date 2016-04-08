@@ -27,6 +27,7 @@ class Event(db.Model):
     location = db.Column(db.String, nullable=True)
     url = db.Column(db.String, unique=True)
     description = db.Column(db.Text, nullable=False)
+
     fb_id = db.Column(db.String, unique=True, nullable=True)
     sundial_id = db.Column(db.String, unique=True, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
@@ -114,3 +115,22 @@ class User(db.Model):
             return None
         else:
             return User.query.filter_by(name=result).first()
+
+
+
+class Tag(db.Model):
+    __tablename__ = 'tag'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(location = db.Column(db.String, nullable=False))
+    
+
+
+class EventTag(db.Model):
+    __tablename__ = 'event_tag'
+    
+    tagid = db.Column(db.Integer, primary_key=True)
+    eventid = db.Column(db.Integer, primary_key=True)
+    
+    
+    
