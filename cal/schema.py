@@ -4,6 +4,9 @@ from sqlalchemy_searchable import SearchQueryMixin
 from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy_searchable import make_searchable
 
+from sqlalchemy import Table, Column, Integer, ForeignKey
+from sqlalchemy.orm import relationship
+
 from pytz import timezone
 from fuzzywuzzy import process, fuzz
 import datetime as dt
@@ -84,6 +87,19 @@ class Event(db.Model):
                                     fuzz.ratio(e.name, event.name)))
         return e
 
+        
+event_tag_association = Table('event_tag', db.metadata,
+    Column('tag_id', db.Integer, ForeignKey('tag.id')),
+    Column('event_id', db.Integer, ForeignKey('event.id'))
+)
+
+class Tag(db.Model):
+    __tablename__ = 'tag'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.String, nullable=False)
+    children = relationship("Event", secondary=event_tag_association)
+    
 
 class User(db.Model):
     __tablename__ = "user"
@@ -117,20 +133,10 @@ class User(db.Model):
             return User.query.filter_by(name=result).first()
 
 
-
-class Tag(db.Model):
-    __tablename__ = 'tag'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    tag = db.Column(location = db.Column(db.String, nullable=False))
-    
-
-
+'''
 class EventTag(db.Model):
     __tablename__ = 'event_tag'
     
     tagid = db.Column(db.Integer, primary_key=True)
     eventid = db.Column(db.Integer, primary_key=True)
-    
-    
-    
+ '''
