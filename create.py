@@ -1,5 +1,7 @@
 import yaml
-from cal import app, db, User, update_fb_events, update_engineering_events
+from cal import app, db, User
+from scrapers import fb.update_fb_events
+from scrapers import engineeringevents.update_engineering_events
 
 with app.app_context():
     # It is important to call this before creating tables
