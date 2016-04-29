@@ -17,5 +17,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # run the install script for dependencies
   config.vm.provision :shell, :path => "config/bootstrap.sh"
+  
+  # increase memory
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+  #  v.cpus = 2
+  end
+  
 end
-
