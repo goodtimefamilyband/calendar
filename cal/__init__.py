@@ -3,7 +3,7 @@ from io import BytesIO
 
 from flask import Flask, jsonify, render_template, request, send_file
 
-from cal.schema import db, Event, User  # noqa
+from cal.schema import db, Event, User, Tag, EventTag  # noqa
 from cal.ics import to_icalendar
 
 # Initialize the app
@@ -32,7 +32,23 @@ def page_not_found(e):
 @app.route('/')
 def home():
     return render_template('index.html')
-
+    
+# select t.tag, et.ed_weight from tag t inner join event_tag et on t.id = et.tag_id where et.event_id = 100;
+@app.route('/event_tags/<int:eventid>')
+def get_one_event(eventid):
+    results = db.session.query(Tag, EventTag).\
+    filter(Tag.id==EventTag.tag_id).\
+    filter(EventTag.event_id==eventid).\
+    all()
+    
+    j_tags = {}
+    for t, et in results:
+        j_tags[t.tag] = et.ed_weight
+        
+    event = Event.query.filter(Event.id==eventid).first()
+    j_result = {"description": event.description, "tags": j_tags}
+    
+    return jsonify(data=j_result)
 
 @app.route("/events/<int:year>/<int:month>/<int:day>")
 def events(year, month, day):
