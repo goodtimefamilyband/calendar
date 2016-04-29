@@ -14,6 +14,21 @@ make_searchable()
 class EventQuery(BaseQuery, SearchQueryMixin):
     pass
 
+class EventTag(db.Model):
+    __tablename__ = 'event_tag'
+    
+    tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), primary_key=True)
+    ed_weight = db.Column(db.Float)
+    child = db.relationship("Event")
+    
+class Tag(db.Model):
+    __tablename__ = 'tag'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.String, nullable=False)
+    children = db.relationship("EventTag")
+
 class Event(db.Model):
     query_class = EventQuery
 
@@ -86,18 +101,13 @@ class Event(db.Model):
 
         
 #TODO primary_key('tag_id', 'event_id')
+'''
 event_tag_association = db.Table('event_tag', db.metadata,
     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
     db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
+    db.Column('ed_weight', db.Float)
 )
-
-class Tag(db.Model):
-    __tablename__ = 'tag'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    tag = db.Column(db.String, nullable=False)
-    event_tags = db.relationship("Event", secondary=event_tag_association)
-    
+'''
 
 class User(db.Model):
     __tablename__ = "user"
